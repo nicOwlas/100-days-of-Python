@@ -19,15 +19,26 @@ screen.onkey(fun=snake.down, key="Down")
 screen.onkey(fun=snake.right, key="Right")
 screen.onkey(fun=snake.left, key="Left")
 
-is_game_on = True
-while is_game_on:
+game_is_on = True
+while game_is_on:
     screen.update()
     time.sleep(0.1)
     snake.move()
 
     ## Detect collision with food
     if food.distance(snake.head) <= 15:
+        snake.extend()
         food.move()
         scoreboard.score_increase()
+
+    ## Detect collisions
+    if (
+        abs(snake.head.xcor()) > 280
+        or abs(snake.head.ycor()) > 280
+        or snake.is_tail_colliding() is True
+    ):
+        scoreboard.gameover()
+        game_is_on = False
+
 
 screen.exitonclick()
