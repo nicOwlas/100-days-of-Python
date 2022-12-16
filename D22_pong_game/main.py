@@ -1,16 +1,19 @@
 from turtle import Screen
 from paddle import Paddle
+from ball import Ball
 import time
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 
+screen = Screen()
+
 paddle_1 = Paddle(initial_position=(-360, 0), up_key="a", down_key="q")
 paddle_2 = Paddle(initial_position=(360, 0), up_key="Up", down_key="Down")
+ball = Ball()
 
 paddles = [paddle_1, paddle_2]
 
-screen = Screen()
 screen.setup(width=SCREEN_WIDTH, height=SCREEN_HEIGHT)
 screen.bgcolor("black")
 screen.tracer(0)
@@ -23,7 +26,22 @@ is_game_on = True
 
 while is_game_on:
     screen.update()
-    time.sleep(0.1)
+    time.sleep(0.01)
+    ball.move()
 
+    # Detect collision with paddle
+    for paddle in paddles:
+        if (
+            abs(ball.xcor() - paddle.xcor()) < 10
+            and abs(ball.ycor() - paddle.ycor()) < 40
+        ):
+            ball.bounce_left_right_walls()
+
+    # Detect collision with the walls
+    if abs(ball.ycor()) > 290:
+        ball.bounce_top_bottom_walls()
+
+    # if abs(ball.xcor()) > 390:
+    #     ball.bounce_left_right_walls()
 
 screen.exitonclick()
