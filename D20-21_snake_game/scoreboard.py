@@ -19,7 +19,9 @@ class Scoreboard(Turtle):
 
     def score_increase(self):
         self.score += 1
-        print(self.score)
         self.clear()
-        print(self.score)
         self.score_refresh()
+
+    def gameover(self):
+        self.setpos(0, 0)
+        self.write("GAME OVER :(", align=ALIGNMENT, font=FONT)
