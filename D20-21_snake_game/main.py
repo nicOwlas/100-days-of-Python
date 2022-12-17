@@ -37,8 +37,7 @@ while game_is_on:
         or abs(snake.head.ycor()) > 280
         or snake.is_tail_colliding() is True
     ):
-        scoreboard.gameover()
-        game_is_on = False
+        scoreboard.reset()
 
 
 screen.exitonclick()
