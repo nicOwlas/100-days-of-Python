@@ -1,8 +1,6 @@
 from turtle import Turtle
 import random
 
-BALL_SPEED = 4
-
 
 class Ball(Turtle):
     def __init__(self):
@@ -11,19 +9,22 @@ class Ball(Turtle):
         self.penup()
         self.color("white")
         self.shapesize(stretch_len=0.5, stretch_wid=0.5)
-        angle_start = random.randint(-30, 30)
-        self.tilt(-angle_start)
-        self.setheading(angle_start)
+        self.x_move = random.randint(1, 10)
+        self.y_move = random.randint(1, 10)
+        self.speed = 4
 
     def move(self):
-        self.forward(BALL_SPEED)
+        new_x = self.xcor() + self.x_move
+        new_y = self.ycor() + self.y_move
+        self.goto((new_x, new_y))
 
     def bounce_top_bottom_walls(self):
-        bounce_angle = -self.heading()
-        self.setheading(bounce_angle)
-        self.tiltangle(0)
+        self.y_move *= -1
 
     def bounce_left_right_walls(self):
-        bounce_angle = (180 - self.heading()) % 360
-        self.setheading(bounce_angle)
-        self.tiltangle(0)
+        self.x_move *= -1
+
+    def reset(self):
+        self.goto(0, 0)
+        self.x_move *= -1
+        self.y_move = random.randint(1, 10)

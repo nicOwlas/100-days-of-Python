@@ -24,9 +24,9 @@ class Paddle(Turtle):
     def move_down(self):
         self.setposition(self.xcor(), self.ycor() - MOVE_SPEED)
 
-    def is_ball_colliding(self, ball):
+    def is_colliding(self, ball):
         if (
             abs(ball.xcor() - self.xcor()) < PADDLE_WIDTH
-            and abs(ball.ycor() - self.ycor()) < PADDLE_HEIGHT / 2
+            and abs(ball.ycor() - self.ycor()) <= PADDLE_HEIGHT / 2
         ):
             return True

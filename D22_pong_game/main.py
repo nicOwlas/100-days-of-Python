@@ -29,8 +29,7 @@ draw_net()
 paddle_1 = Paddle(initial_position=(-360, 0), up_key="a", down_key="q")
 paddle_2 = Paddle(initial_position=(360, 0), up_key="Up", down_key="Down")
 ball = Ball()
-score_1 = Scoreboard((-60, 200), draw_net=True)
-score_2 = Scoreboard((60, 200), draw_net=True)
+scoreboard = Scoreboard()
 
 paddles = [paddle_1, paddle_2]
 
@@ -50,20 +49,20 @@ while is_game_on:
 
     # Detect collision with paddle
     for paddle in paddles:
-        if paddle.is_ball_colliding(ball):
+        if paddle.is_colliding(ball):
             ball.bounce_left_right_walls()
-            if paddle is paddle_1:
-                score_1.score_increase()
-            else:
-                score_2.score_increase()
+            ball.speed += 1
 
     # Detect collision with the walls
     if abs(ball.ycor()) > 290:
         ball.bounce_top_bottom_walls()
 
-    # Detect game over condition
-    if abs(ball.xcor()) > 390:
-        score_1.game_over()
-        is_game_on = False
+    # Detect scoring condition
+    if ball.xcor() > 390:
+        ball.reset()
+        scoreboard.score_left_increase()
+    elif ball.xcor() < -390:
+        ball.reset()
+        scoreboard.score_right_increase()
 
 screen.exitonclick()
