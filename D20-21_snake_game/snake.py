@@ -16,6 +16,13 @@ class Snake:
             position = (-20 * index + INITIAL_POSITION[0], INITIAL_POSITION[1])
             self.add_segment(position)
 
+    def reset(self):
+        for segment in self.segments:
+            segment.hideturtle()
+        self.segments.clear()
+        self.create_snake()
+        self.head = self.segments[0]
+
     def add_segment(self, position):
         segment = Turtle(shape="square")
         segment.color("white")
