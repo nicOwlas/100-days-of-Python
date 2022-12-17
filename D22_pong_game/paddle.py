@@ -1,6 +1,8 @@
 from turtle import Turtle
 
-MOVE_SPEED = 20
+MOVE_SPEED = 30
+PADDLE_HEIGHT = 160
+PADDLE_WIDTH = 10
 
 
 class Paddle(Turtle):
@@ -9,7 +11,9 @@ class Paddle(Turtle):
         self.penup()
         self.color("white")
         self.shape("square")
-        self.shapesize(stretch_wid=4, stretch_len=0.5)
+        self.shapesize(
+            stretch_wid=(PADDLE_HEIGHT / 20), stretch_len=(PADDLE_WIDTH / 20)
+        )
         self.goto(initial_position)
         self.up_key = up_key
         self.down_key = down_key
@@ -19,3 +23,10 @@ class Paddle(Turtle):
 
     def move_down(self):
         self.setposition(self.xcor(), self.ycor() - MOVE_SPEED)
+
+    def is_ball_colliding(self, ball):
+        if (
+            abs(ball.xcor() - self.xcor()) < PADDLE_WIDTH
+            and abs(ball.ycor() - self.ycor()) < PADDLE_HEIGHT / 2
+        ):
+            return True
