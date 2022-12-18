@@ -137,3 +137,5 @@ dmypy.json
 *.jpg
 
 *.code-workspace
+
+*.csv
