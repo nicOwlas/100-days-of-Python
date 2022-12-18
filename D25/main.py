@@ -11,5 +11,8 @@ import pandas
 #     print(temperatures)
 
 data = pandas.read_csv("./weather_data.csv")
-temperature_max = data["temp"].max()
-print(data[data.temp == temperature_max])
+print(data)
+monday = data[data.day == "Monday"]
+monday_temperature_fahrenheit = int(monday.temp) * 9 / 5 + 32
+# data.loc[data.day == "Monday", ["temp"]] = monday.temp * 1.8 + 32
+print(monday_temperature_fahrenheit)
