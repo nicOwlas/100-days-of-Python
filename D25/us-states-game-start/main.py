@@ -12,8 +12,7 @@ screen.tracer(0)
 
 data = pandas.read_csv("./50_states.csv")
 
-game_is_on = True
-score = 0
+guessed_states = []
 
 
 def create_state(name, position):
@@ -26,16 +25,26 @@ def create_state(name, position):
     state.write(name, align="center", font=FONT)
 
 
-while game_is_on:
-    guess = turtle.textinput(f"Guessed: {score}/50", "Enter a US State name")
-    print(data.state.str.lower())
-    if guess.lower() in [state.lower() for state in data.state.to_list()]:
-        state_data = data[data.state.str.lower() == guess.lower()]
-        state_name = state_data.state.to_string(index=False)
+while len(guessed_states) < 50:
+    guess = turtle.textinput(
+        f"Guessed: {len(guessed_states)}/50", "Enter a US State name"
+    ).title()
+    if guess == "Exit":
+        # States to learn
+        states_to_learn = []
+        data_dict = {}
+        for state in data.state.values:
+            if state not in guessed_states:
+                states_to_learn.append(state)
+
+        data_dict["States to learn"] = states_to_learn
+
+        panda_frame = pandas.DataFrame(data_dict)
+        panda_frame.to_csv("states_to_learn.csv", index=False)
+        break
+    elif guess in data.state.values:
+        state_data = data[data.state == guess]
+        state_name = state_data.state.item()
         state_position = (int(state_data.x), int(state_data.y))
         create_state(name=state_name, position=state_position)
-        score += 1
-    elif guess is None:
-        break
-
-screen.exitonclick()
+        guessed_states.append(state_name)
