@@ -31,14 +31,11 @@ while len(guessed_states) < 50:
     ).title()
     if guess == "Exit":
         # States to learn
-        states_to_learn = []
         data_dict = {}
-        for state in data.state.values:
-            if state not in guessed_states:
-                states_to_learn.append(state)
-
+        states_to_learn = [
+            state for state in data.state.values if state not in guessed_states
+        ]
         data_dict["States to learn"] = states_to_learn
-
         panda_frame = pandas.DataFrame(data_dict)
         panda_frame.to_csv("states_to_learn.csv", index=False)
         break
