@@ -53,5 +53,5 @@ def main():
     print(weather_f)
 
 
-if __name__ == main():
+if __name__ == "__main__":
     main()
