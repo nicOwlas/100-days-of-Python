@@ -8,6 +8,28 @@ import pyperclip
 BACKGROUND_COLOR = "white"
 FOREGROUND_COLOR = "black"
 
+# ---------------------------- SEARCH WEBSITE ------------------------------- #
+def search_website():
+    website = website_entry.get().lower()
+    login = login_entry.get()
+    password = password_entry.get()
+    try:
+        with open("./data.json", "r") as file:
+            data = json.load(file)
+    except:
+        messagebox.showwarning(title=website_entry.get(), message="No data file found")
+    else:
+        if website in data:
+            messagebox.showinfo(
+                title=website,
+                message=f"Login: {data[website]['login']}\nPassword: {data[website]['password']}",
+            )
+        else:
+            messagebox.showwarning(
+                title=website_entry.get(), message="Website not found"
+            )
+
+
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
 def password_auto_complete():
     password = password_generator()
@@ -18,27 +40,30 @@ def password_auto_complete():
 
 # ---------------------------- SAVE PASSWORD ------------------------------- #
 def save():
-    website = website_entry.get()
+    website = website_entry.get().lower()
     login = login_entry.get()
     password = password_entry.get()
+    new_data = {website: {"login": login, "password": password}}
 
     is_form_complete = not (not website or not login or not password)
 
     if is_form_complete:
-        is_ok = messagebox.askokcancel(
-            title=website,
-            message=f"Save?\n•website: {website}\n•login: {login} \n•password: {password}",
-        )
-        if is_ok:
-            with open("./data.json") as file:
-                try:
-                    data = json.load(file)
-                except JSONDecodeError:
-                    data = []
-            data.append({"website": website, "login": login, "password": password})
-            with open("./data.json", mode="w") as file:
-                json.dump(data, file, indent=2)
-
+        # is_ok = messagebox.askokcancel(
+        #     title=website,
+        #     message=f"Save?\n•website: {website}\n•login: {login} \n•password: {password}",
+        # )
+        # if is_ok:
+        try:
+            with open("./data.json", "r") as file:
+                data = json.load(file)
+        except FileNotFoundError:
+            with open("./data.json", "w") as file:
+                data = json.dump(new_data, file, indent=4)
+        else:
+            data.update(new_data)
+            with open("./data.json", "w") as file:
+                json.dump(data, file, indent=4)
+        finally:
             website_entry.delete(first=0, last=END)
             password_entry.delete(first=0, last=END)
             messagebox.showinfo(title=website, message="Info saved to file")
@@ -66,10 +91,20 @@ website_label = Label(text="Website:", fg=FOREGROUND_COLOR, bg=BACKGROUND_COLOR)
 website_label.grid(row=1, column=0)
 
 website_entry = Entry(
-    width=40, fg=FOREGROUND_COLOR, bg=BACKGROUND_COLOR, highlightthickness=0
+    width=23, fg=FOREGROUND_COLOR, bg=BACKGROUND_COLOR, highlightthickness=0
 )
-website_entry.grid(row=1, column=1, columnspan=2)
+website_entry.grid(row=1, column=1, columnspan=1)
 website_entry.focus()
+
+search_button = Button(
+    text="Search",
+    fg=FOREGROUND_COLOR,
+    bg=BACKGROUND_COLOR,
+    highlightthickness=0,
+    command=search_website,
+    width=13,
+)
+search_button.grid(row=1, column=2)
 
 login_label = Label(text="Email / Username:", fg=FOREGROUND_COLOR, bg=BACKGROUND_COLOR)
 login_label.grid(row=2, column=0)
@@ -94,6 +129,7 @@ generate_password_button = Button(
     bg=BACKGROUND_COLOR,
     highlightthickness=0,
     command=password_auto_complete,
+    width=13,
 )
 generate_password_button.grid(row=3, column=2)
 
