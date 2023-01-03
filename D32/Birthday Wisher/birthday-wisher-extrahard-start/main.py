@@ -7,6 +7,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 def is_birthday_today(friends_dataframe):
+    """Add a column with 0s and 1s for the records having a birthday today"""
+
     today = dt.date.today()
     friends_dataframe = friends_dataframe.assign(is_birthday_today=0)
     for index, birthday in friends_dataframe.iterrows():
@@ -18,6 +20,8 @@ def is_birthday_today(friends_dataframe):
     return friends_dataframe
 
 def send_email(email_recipient,email_message):
+    """Sends an email. The sender email is defined in the .env file"""
+
     smtp_address = os.environ.get("SMTP_ADDRESS")
     email_sender = os.environ.get("EMAIL_SENDER")
     password_app = os.environ.get("PASSWORD_APP")
@@ -44,4 +48,4 @@ for _, friend in friends_having_birthday.iterrows():
     with open(f"./letter_templates/letter_{letter_index}.txt", encoding="UTF-8") as file:
         generic_message = file.read()
     message = generic_message.replace("[NAME]",friend["name"])
-    send_email(email_recipient=friend["email"], email_message=message)
+    # send_email(email_recipient=friend["email"], email_message=message)
