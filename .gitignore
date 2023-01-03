@@ -147,3 +147,5 @@ dmypy.json
 *.gif
 
 .vscode/
+
+.prettierrc
