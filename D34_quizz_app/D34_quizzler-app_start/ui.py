@@ -38,14 +38,42 @@ class QuizInterface:
         self.window.mainloop()
 
     def is_true(self):
-        self.quiz.check_answer("True")
+        is_right = self.quiz.check_answer("True")
+        self.give_feedback(is_right)
+        # Disable the button else more than one point can be granted if the answer is correct
+        self.true_button.config(state="disabled")
 
     def is_false(self):
-        self.quiz.check_answer("False")
+        is_right = self.quiz.check_answer("False")
+        self.give_feedback(is_right)
+        # Disable the button else more than one point can be granted if the answer is correct
+        self.false_button.config(state="disabled")
 
     def get_next_question(self):
-        question = self.quiz.next_question()
-        self.canvas.itemconfig(self.question_text, text=question)
+        self.canvas.config(bg="white")
+        if self.quiz.still_has_questions():
+            self.score_label.config(text=f"Score: {self.quiz.score}")
+            question = self.quiz.next_question()
+            self.canvas.itemconfig(self.question_text, text=question)
+            self.true_button.config(state="normal")
+            self.false_button.config(state="normal")
+        else:
+            self.canvas.itemconfig(
+                self.question_text, text="You've reached the end of the challenge"
+            )
+            self.true_button.config(state="disabled")
+            self.false_button.config(state="disabled")
+
+    def give_feedback(self, is_right):
+        print(is_right)
+        if is_right:
+            self.canvas.config(bg="green")
+        else:
+            self.canvas.config(bg="red")
+
+        self.window.after(500, self.get_next_question)
+        # self.canvas.config(bg="white")
+        # self.get_next_question()
 
 
 if __name__ == "__main__":
