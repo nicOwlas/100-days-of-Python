@@ -1,4 +1,5 @@
-from tkinter import Tk, Canvas, Label, Button, PhotoImage
+from tkinter import Button, Canvas, Label, PhotoImage, Tk
+
 from quiz_brain import QuizBrain
 
 THEME_COLOR = "#375362"
