@@ -65,13 +65,21 @@ def update_pixel(**kwargs) -> None:
     update_endpoint = f"{PIXEL_API_ENDPOINT}/{kwargs['date']}"
 
     pixel_params = {
-        "quantity": kwargs["quantity"],
-        "optionalData": kwargs["optionalData"],
+        "quantity": kwargs.get("quantity"),
+        "optionalData": kwargs.get("optionalData"),
     }
 
     response = requests.put(
         url=update_endpoint, json=pixel_params, headers=headers, timeout=30
     )
+    print(response.text)
+
+
+def delete_pixel(**kwargs) -> None:
+    """Update a pixel"""
+    delete_endpoint = f"{PIXEL_API_ENDPOINT}/{kwargs['date']}"
+
+    response = requests.delete(url=delete_endpoint, headers=headers, timeout=30)
     print(response.text)
 
 
@@ -93,8 +101,10 @@ if __name__ == "__main__":
     #     optionalData="5.14",
     # )
 
-    update_pixel(
-        date=datetime.strftime(pixel_date, "%Y%m%d"),
-        quantity="8.14",
-        optionalData="5.14",
-    )
+    # update_pixel(
+    #     date=datetime.strftime(pixel_date, "%Y%m%d"),
+    #     quantity="8.14",
+    #     optionalData="5.14",
+    # )
+
+    delete_pixel(date=datetime.strftime(pixel_date, "%Y%m%d"))
