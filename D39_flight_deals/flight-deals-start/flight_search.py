@@ -21,9 +21,8 @@ def get_iata_city_code(name: str) -> str:
     response = requests.get(
         url=api_endpoint, params=parameters, headers=header, timeout=30
     )
-    print(response.json())
-    for location in response.json():
 
+    for location in response.json().get("locations"):
         if location.get("type") == "city":
             return location.get("code")
 
