@@ -5,9 +5,9 @@ import inflect
 import requests
 from dotenv import load_dotenv
 
-p = inflect.engine()
-
 load_dotenv()
+
+p = inflect.engine()
 
 
 def to_camel_case(text: str) -> str:
@@ -40,6 +40,7 @@ class DataManager:
     def get_tab_data(self) -> dict:
         """Read and return values stored in tab_name"""
         response = requests.get(url=self.api_endpoint, headers=self.header, timeout=30)
+        response.raise_for_status()
         return response.json().get(self.tab_name)
 
     def update_row(self, row_data: dict) -> None:
