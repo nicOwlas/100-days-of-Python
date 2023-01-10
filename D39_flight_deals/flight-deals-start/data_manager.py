@@ -28,8 +28,7 @@ class DataManager:
         self.username = os.environ.get("SHEETY_USERNAME")
         self.file_name = to_camel_case(file_name)
         self.tab_name = to_camel_case(tab_name)
-        self.token = os.environ.get("SHEETY_TOKEN")
-        self.header = {"Authorization": f"Bearer {self.token}"}
+        self.header = {"Authorization": f"Bearer {os.environ.get('SHEETY_TOKEN')}"}
         self.api_endpoint = (
             f"https://api.sheety.co/{self.username}/{self.file_name}/{self.tab_name}"
         )
