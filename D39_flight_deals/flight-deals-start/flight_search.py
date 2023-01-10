@@ -32,7 +32,14 @@ class FlightSearch:
                 return location.get("code")
 
     def search(
-        self, *, fly_from: str, fly_to: str, date_from: str, date_to: str
+        self,
+        *,
+        fly_from: str,
+        fly_to: str,
+        date_from: str,
+        date_to: str,
+        nights_in_dst_from: int,
+        nights_in_dst_to: int,
     ) -> dict:
         """Search on KIWI API for given flights"""
 
@@ -47,6 +54,11 @@ class FlightSearch:
             "fly_to": fly_to,
             "date_from": date_from_fr_format,
             "date_to": date_to_fr_format,
+            "nights_in_dst_from": nights_in_dst_from,
+            "nights_in_dst_to": nights_in_dst_to,
+            "curr": "EUR",
+            "sort": "price",
+            "asc": -1,  # cheapest first
         }
 
         response = requests.get(
@@ -55,8 +67,9 @@ class FlightSearch:
             headers=self.header,
             timeout=30,
         )
+        response.raise_for_status()
 
-        return response.json()
+        return response.json().get("data")
 
 
 if __name__ == "__main__":
