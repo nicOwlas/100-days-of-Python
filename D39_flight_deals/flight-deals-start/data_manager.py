@@ -80,5 +80,4 @@ if __name__ == "__main__":
         update_status = await data_manager.update_row(row_data=row)
         print(update_status)
 
-
-asyncio.run(main())
+    asyncio.run(main())
