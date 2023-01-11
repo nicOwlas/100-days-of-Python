@@ -15,10 +15,10 @@ class FlightSearch:
         self.header = {"apikey": os.environ.get("KIWI_API_KEY")}
         self.api_endpoint = "https://api.tequila.kiwi.com"
 
-    def get_iata_city_code(self, name: str) -> str:
+    def get_iata_city_code(self, city_name: str) -> str:
         """Returns a city IATA code by its name"""
         location_api_endpoint = f"{self.api_endpoint}/locations/query"
-        parameters = {"term": name}
+        parameters = {"term": city_name.replace(" ", "-")}
 
         response = requests.get(
             url=location_api_endpoint,
