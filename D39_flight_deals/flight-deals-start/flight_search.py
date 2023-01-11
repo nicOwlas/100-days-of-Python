@@ -45,7 +45,7 @@ class FlightSearch:
         nights_in_dst_from: int = 2,
         nights_in_dst_to: int = 2,
     ) -> dict:
-        """Search KIWI API for given flights"""
+        """Search on KIWI API for given flights"""
 
         # Convert dates to KIWI API input format
         date_from_fr_format = datetime.strptime(date_from, "%Y-%m-%d").strftime(
@@ -74,13 +74,11 @@ class FlightSearch:
         )
         response.raise_for_status()
 
-        return response.json().get("data")
+        return response.json().get("data")[0]
 
 
 if __name__ == "__main__":
     import json
-
-    destinations = [{"city": "Miami"}, {"city": "Paris"}]
 
     async def main():
 
@@ -89,36 +87,23 @@ if __name__ == "__main__":
         time_start = perf_counter()
 
         async with asyncio.TaskGroup() as tg:
-            tasks = [
-                tg.create_task(
-                    flight_search.get_iata_city_code(destination.get("city"))
-                )
-                for destination in destinations
-            ]
-
-        updated_destinations = [
-            dict(destination, iataCode=tasks[index].result())
-            for (index, destination) in enumerate(destinations)
-        ]
-
-        # async with asyncio.TaskGroup() as tg:
-        #     task1 = tg.create_task(
-        #         flight_search.search(
-        #             fly_from="LGA",
-        #             fly_to="MIA",
-        #             date_from="2023-02-23",
-        #             date_to="2023-02-24",
-        #         ),
-        #     )
-        #     task2 = tg.create_task(
-        #         flight_search.search(
-        #             fly_from="LGA",
-        #             fly_to="MIA",
-        #             date_from="2023-02-25",
-        #             date_to="2023-02-27",
-        #         ),
-        #     )
-        # print("Both tasks have completed now.")
+            task1 = tg.create_task(
+                flight_search.search(
+                    fly_from="LGA",
+                    fly_to="MIA",
+                    date_from="2023-02-23",
+                    date_to="2023-02-24",
+                ),
+            )
+            task2 = tg.create_task(
+                flight_search.search(
+                    fly_from="LGA",
+                    fly_to="MIA",
+                    date_from="2023-02-25",
+                    date_to="2023-02-27",
+                ),
+            )
+        print("Both tasks have completed now.")
 
         print(f"Elapsed time: {perf_counter()-time_start}")
         # print(json.dumps(flights, indent=2))
