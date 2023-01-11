@@ -1,6 +1,8 @@
 """This class is responsible for talking to the Flight Search API."""
+import asyncio
 import os
 from datetime import datetime
+from time import perf_counter
 
 import requests
 from dotenv import load_dotenv
@@ -15,31 +17,33 @@ class FlightSearch:
         self.header = {"apikey": os.environ.get("KIWI_API_KEY")}
         self.api_endpoint = "https://api.tequila.kiwi.com"
 
-    def get_iata_city_code(self, city_name: str) -> str:
+    async def get_iata_city_code(self, city_name: str) -> str:
         """Returns a city IATA code by its name"""
         location_api_endpoint = f"{self.api_endpoint}/locations/query"
         parameters = {"term": city_name.replace(" ", "-")}
 
-        response = requests.get(
+        response = await asyncio.to_thread(
+            requests.get,
             url=location_api_endpoint,
             params=parameters,
             headers=self.header,
             timeout=30,
         )
+        response.raise_for_status()
 
         for location in response.json().get("locations"):
             if location.get("type") == "city":
                 return location.get("code")
 
-    def search(
+    async def search(
         self,
         *,
         fly_from: str,
         fly_to: str,
         date_from: str,
         date_to: str,
-        nights_in_dst_from: int,
-        nights_in_dst_to: int,
+        nights_in_dst_from: int = 2,
+        nights_in_dst_to: int = 2,
     ) -> dict:
         """Search on KIWI API for given flights"""
 
@@ -61,7 +65,8 @@ class FlightSearch:
             "asc": -1,  # cheapest first
         }
 
-        response = requests.get(
+        response = await asyncio.to_thread(
+            requests.get,
             url=f"{self.api_endpoint}/v2/search",
             params=parameters,
             headers=self.header,
@@ -69,15 +74,38 @@ class FlightSearch:
         )
         response.raise_for_status()
 
-        return response.json().get("data")
+        return response.json().get("data")[0]
 
 
 if __name__ == "__main__":
     import json
 
-    flight_search = FlightSearch()
+    async def main():
 
-    flights = flight_search.search(
-        fly_from="LGA", fly_to="MIA", date_from="2023-02-23", date_to="2023-02-24"
-    )
-    print(json.dumps(flights, indent=2))
+        flight_search = FlightSearch()
+
+        time_start = perf_counter()
+
+        async with asyncio.TaskGroup() as tg:
+            task1 = tg.create_task(
+                flight_search.search(
+                    fly_from="LGA",
+                    fly_to="MIA",
+                    date_from="2023-02-23",
+                    date_to="2023-02-24",
+                ),
+            )
+            task2 = tg.create_task(
+                flight_search.search(
+                    fly_from="LGA",
+                    fly_to="MIA",
+                    date_from="2023-02-25",
+                    date_to="2023-02-27",
+                ),
+            )
+        print("Both tasks have completed now.")
+
+        print(f"Elapsed time: {perf_counter()-time_start}")
+        # print(json.dumps(flights, indent=2))
+
+    asyncio.run(main())
