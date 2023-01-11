@@ -1,10 +1,14 @@
 """Send a notifications"""
+import asyncio
 import os
 import smtplib
 
+import aiosmtplib
+
 
 class NotificationManager:
-    # This class is responsible for sending notifications with the deal flight details.
+    """This class is responsible for sending notifications with the deal flight details."""
+
     def __init__(self) -> None:
         pass
 
@@ -23,21 +27,38 @@ Return date: {local_return_date}\n".encode(
         )
         return {"subject": email_subject, "message": email_message}
 
-    def send_email(self, *, recipient_email: str, subject: str, message: str) -> None:
+    def send_email(self, *, recipient_email: str, subject: str, body: str) -> None:
         """Send an email"""
 
         smtp_address = os.environ.get("SMTP_ADDRESS")
-        email_sender = os.environ.get("EMAIL_SENDER")
-        password_app = os.environ.get("PASSWORD_APP")
+        sender = os.environ.get("EMAIL_SENDER")
+        password = os.environ.get("PASSWORD_APP")
 
         with smtplib.SMTP(smtp_address) as connection:
             connection.starttls()
-            connection.login(user=email_sender, password=password_app)
+            connection.login(user=sender, password=password)
             connection.sendmail(
-                from_addr=email_sender,
+                from_addr=sender,
                 to_addrs=recipient_email,
-                msg=f"Subject:{subject}\n\n{message}",
+                msg=f"Subject:{subject}\n\n{body}",
             )
+
+    async def send_async_email(
+        self, *, recipient_email: str, subject: str, body: str
+    ) -> None:
+        """Send an email in async"""
+        smtp_address = os.environ.get("SMTP_ADDRESS")
+        sender = os.environ.get("EMAIL_SENDER")
+        password = os.environ.get("PASSWORD_APP")
+        smtp = aiosmtplib.SMTP(hostname=smtp_address, use_tls=True)
+        await smtp.connect()
+        await smtp.login(username=sender, password=password)
+        await smtp.sendmail(
+            sender=sender,
+            recipients=recipient_email,
+            message=f"Subject:{subject}\n{body}",
+        )
+        await smtp.quit()
 
 
 if __name__ == "__main__":
@@ -46,6 +67,17 @@ if __name__ == "__main__":
     load_dotenv()
     EMAIL_TO = os.environ.get("EMAIL_RECIPIENT")
     notification_manager = NotificationManager()
-    notification_manager.send_email(
-        recipient_email=EMAIL_TO, subject="Hello Nico", message="Test message"
-    )
+
+    async def main():
+        """Sync and async emails"""
+        notification_manager.send_email(
+            recipient_email=EMAIL_TO, subject="Hello Nico", body="Test message"
+        )
+
+        await notification_manager.send_async_email(
+            recipient_email=EMAIL_TO,
+            subject="Hello Nico Async",
+            body="Test async message",
+        )
+
+    asyncio.run(main())
