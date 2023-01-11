@@ -1,4 +1,5 @@
 """This class is responsible for talking to the Google Sheet."""
+import asyncio
 import os
 
 import inflect
@@ -37,13 +38,18 @@ class DataManager:
             tab_name if not p.singular_noun(tab_name) else p.singular_noun(tab_name)
         )
 
-    def get_tab_data(self) -> dict:
+    async def get_tab_data(self) -> dict:
         """Read and return values stored in tab_name"""
-        response = requests.get(url=self.api_endpoint, headers=self.header, timeout=30)
+        response = await asyncio.to_thread(
+            requests.get,
+            url=self.api_endpoint,
+            headers=self.header,
+            timeout=30,
+        )
         response.raise_for_status()
         return response.json().get(self.tab_name)
 
-    def update_row(self, row_data: dict) -> None:
+    async def update_row(self, row_data: dict) -> None:
         """Update a given row. dictionnary with key/value.
         Keys : camelCase of the column titles / Values: data to be updated
         An 'id' key takes an int for value. It's the row index (starts at 1) to be updated
@@ -52,15 +58,27 @@ class DataManager:
         update_row_endpoint = f"{self.api_endpoint}/{row_id}"
 
         payload = {self.tab_name_singular: row_data}
-        requests.put(
-            url=update_row_endpoint, json=payload, headers=self.header, timeout=30
+        response = await asyncio.to_thread(
+            requests.put,
+            url=update_row_endpoint,
+            json=payload,
+            headers=self.header,
+            timeout=30,
         )
+        return response.status_code
 
 
 if __name__ == "__main__":
-    FILE_NAME = "Flight Deals"
-    TAB_NAME = "prices"
-    row = {"city": "Paris", "iataCode": "", "lowestPrice": 54, "id": 2}
-    data_manager = DataManager(file_name=FILE_NAME, tab_name=TAB_NAME)
-    data_manager.get_tab_data()
-    data_manager.update_row(row_data=row)
+
+    async def main():
+        file_name = "Flight Deals"
+        tab_name = "prices"
+        row = {"city": "Miami", "iataCode": "hello", "lowestPrice": 540, "id": 2}
+        data_manager = DataManager(file_name=file_name, tab_name=tab_name)
+        tab_data = await data_manager.get_tab_data()
+        print(tab_data)
+        update_status = await data_manager.update_row(row_data=row)
+        print(update_status)
+
+
+asyncio.run(main())
