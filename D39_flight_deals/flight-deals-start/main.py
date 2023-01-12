@@ -31,7 +31,7 @@ async def cheap_flight_scanner(
         for (index, destination) in enumerate(destinations)
     ]
 
-    # Update the Google Sheet with the codes
+    # Update the Google Sheet with the IATA codes
     async with asyncio.TaskGroup() as tg:
         _ = [
             tg.create_task(
