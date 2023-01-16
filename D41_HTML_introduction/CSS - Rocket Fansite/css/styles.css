@@ -1,0 +1,28 @@
+/********************* Tag Selector *********************/
+h1 {
+  font-size: 100px;
+  color: red;
+}
+
+img:hover {
+  background-color: gold;
+}
+
+/********************* Class Selector *********************/
+
+.rocket-whatsapp {
+  background-color: blue;
+}
+
+.rocket-apple {
+  background-color: black;
+}
+
+.circular {
+  border-radius: 15%;
+}
+/********************* Id Selector *********************/
+
+#heading {
+  color: blue;
+}
