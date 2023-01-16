@@ -16,3 +16,14 @@ hr {
   border-width: 5px;
   border-color: rgb(198, 197, 197);
 }
+
+th {
+  text-align: left;
+}
+table {
+  border-spacing: 5px;
+}
+
+.profile-picture {
+  border-radius: 100%;
+}
