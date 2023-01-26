@@ -10,6 +10,10 @@ div {
   background-color: #fff5e4;
 }
 
+.pro {
+  text-decoration: underline;
+}
+
 /* .top-container {
   height: 200px;
   width: 200px;
