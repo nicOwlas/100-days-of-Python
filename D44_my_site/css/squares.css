@@ -2,6 +2,7 @@
   background-color: red;
   height: 100px;
   width: 100px;
+  display: inline-block;
   position: relative;
   left: 200px;
 }
@@ -10,15 +11,16 @@
   background-color: yellow;
   height: 100px;
   width: 100px;
+  display: inline-block;
   position: relative;
-  bottom: 200px;
-  left: 100px;
+  right: 100px;
 }
 
 .blue {
   background-color: blue;
   height: 100px;
   width: 100px;
+  display: inline-block;
   position: relative;
-  bottom: 100px;
+  right: 100px;
 }
