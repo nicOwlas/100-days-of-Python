@@ -3,8 +3,9 @@
   height: 100px;
   width: 100px;
   display: inline-block;
-  position: relative;
+  position: absolute;
   left: 200px;
+  top: 200px;
 }
 
 .yellow {
@@ -12,8 +13,9 @@
   height: 100px;
   width: 100px;
   display: inline-block;
-  position: relative;
-  right: 100px;
+  position: absolute;
+  left: 0px;
+  top: 0px;
 }
 
 .blue {
@@ -21,6 +23,7 @@
   height: 100px;
   width: 100px;
   display: inline-block;
-  position: relative;
-  right: 100px;
+  position: absolute;
+  left: 100px;
+  top: 100px;
 }
